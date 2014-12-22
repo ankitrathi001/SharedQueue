@@ -1,0 +1,54 @@
+Files present in the folder:
+1) main_1.c
+2) Squeue.c
+3) CircularBuffer.h
+4) Makefile
+5) Profiling Report.pdf
+
+main_1.c
+==================
+This is a program to test the driver that has been implemented. This file initiates 3 sender threads, 1 bus daemon thread and 3 receiver threads.
+
+Message to be sent from user space to kernel space has to be in the form of structure define below
+typedef struct MessageToken_Tag
+{
+	unsigned int msgID;
+	unsigned int senderID;
+	unsigned int receiverID;
+	unsigned long timeStamp1;
+	unsigned long timeStamp2;
+	char str_msg[80];
+}MessageToken;
+
+
+Squeue.c
+==================
+Squeue.c is the file which implements the driver. It implements four Queue devices.
+bus_in_q for sender threads.
+bus_out_q1, bus_out_q2 and bus_out_q3 for the receiver threads.
+
+CircularBuffer.h
+===================
+This is a header file that has been created to implement the buffer implementation for each queue. It basically performs the operation of Enqueue and Dequeue and is also used to check if the buffer is full or empty.
+
+Steps to execute
+===================
+1) In the terminal, navigate to the path where source files have been placed.
+2) Run the command "make all", this generates the .ko file for the driver.
+3) Install the Squeue.ko file into the kernel by using the command "sudo insmod Squeue.ko"
+4) To check if the Squeue.ko has been loaded into the list of modules, use the command lsmod.
+5) Create the main_1.o object file, by using the command "cc -o main_1.o main_1.c -lpthread".
+6) Now run the command ./main_1.o to execute the program.
+7) To remove the module from the kernel use the command "sudo rmmod Squeue"
+8) To change the mode from Dynamic to Static, two changes are required in the file.
+	a) In CircularBuffer.h, "#define STATIC" needs to be commented to make the code to run as Dynamic and the line needs to be present in case the code needs to run Statically allocated memories.
+	b) In main_.1c, "#define STATIC" needs to be commented to make the code to print received messages on the screen. In case messages need not be displayed then line can be commented.
+9) After making 2 changes mentioned in previous step, the code can be executed again using the same steps from 1 to 7 as mentioned previously.
+
+Makefile
+=============
+This file is used to generate all binary/object files for loading module into the kernel. The file has been created for local running only, it needs to be modified for crosscompiling.
+
+Profiling Report.pdf
+=====================
+This is Profiling report for the assignment 1. It contains snapshots of Memory Usage, CPU Cycles and Number of Instructions executed.
